@@ -1,0 +1,6 @@
+.vscode
+dist
+__pycache__
+*.o
+*.exe
+*.dll
