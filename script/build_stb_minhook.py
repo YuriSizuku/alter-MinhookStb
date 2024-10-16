@@ -48,31 +48,37 @@ def static_func(lines):
     return lines
 
 def make_stbdecl() -> str:
-    return  """#ifndef MINHOOKDEF
+    return  """
+#if defined(_MSC_VER) || defined(__TINYC__)
+#ifndef EXPORT
+#define EXPORT __declspec(dllexport)
+#endif
+#else
+#ifndef EXPORT 
+#define EXPORT __attribute__((visibility("default")))
+#endif
+#endif // _MSC_VER
+#ifndef MINHOOK_API
 #ifdef MINHOOK_STATIC
-#define MINHOOKDEF static
+#define MINHOOK_API_DEF static
 #else
-#define MINHOOKDEF extern
-#endif
-#endif
-
-#ifndef MINHOOK_SHARED
-#define MINHOOK_EXPORT
-#else
-#ifdef _WIN32
-#define MINHOOK_EXPORT __declspec(dllexport)
-#else
-#define MINHOOK_EXPORT __attribute__((visibility("default")))
-#endif
-#endif
+#define MINHOOK_API_DEF extern
+#endif // MINHOOK_STATIC
+#ifdef MINHOOK_SHARED
+#define MINHOOK_API_EXPORT EXPORT
+#else  
+#define MINHOOK_API_EXPORT
+#endif // MINHOOK_SHARED
+#define MINHOOK_API MINHOOK_API_DEF MINHOOK_API_EXPORT
+#endif // MINHOOK_API
 """
 
 @mark_section("minhook_decl")
 def patch_minhook(inpath)->str:
     lines = read_lines(inpath)
     replace_map = {
-        "MH_STATUS WINAPI": "MINHOOKDEF MINHOOK_EXPORT\nMH_STATUS WINAPI",
-        "const char * WINAPI": "MINHOOKDEF MINHOOK_EXPORT\nconst char* WINAPI"
+        "MH_STATUS WINAPI": "MINHOOK_API MH_STATUS WINAPI",
+        "const char * WINAPI": "MINHOOK_API const char* WINAPI"
     }
     lines = replace_lines(lines, replace_map, strip_left=True)
     return "".join(lines)
@@ -157,7 +163,7 @@ def make_stb(repodir, info, version) -> str:
 
 if __name__ == "__main__":
     srcdir = sys.argv[1] if len(sys.argv) > 1 else "depend/minhook" 
-    outpath = sys.argv[2] if len(sys.argv) > 2 else "dist/stb_minhook.h"
+    outpath = sys.argv[2] if len(sys.argv) > 2 else "build/stb_minhook.h"
     version = sys.argv[3] if len(sys.argv) > 3 else "1332"
     stb_ccode = make_stb(srcdir, info, version)
     with open(outpath, "w", encoding="utf-8") as fp:

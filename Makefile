@@ -6,7 +6,7 @@
 # general config
 CC:=clang # clang (llvm-mingw), gcc (mingw-w64), tcc (x86 stdcall name has problem)
 BUILD_TYPE:=32# 32, 32d, 64, 64d
-BUILD_DIR:=dist
+BUILD_DIR:=build
 INCS:=-Isrc
 LIBS:=-luser32
 CFLAGS:=-fPIC -std=c99 \
@@ -34,7 +34,7 @@ LDFLAGS= # tcc can not remove at at stdcall in i686
 else
 endif
 
-all: prepare stb_minhook libminhook libminhook_test
+all: prepare stbminhook libminhook libminhook_test
 
 clean:
 	@rm -rf $(BUILD_DIR)/*minhook*
@@ -42,20 +42,22 @@ clean:
 prepare:
 	@if ! [ -d $(BUILD_DIR) ]; then mkdir -p $(BUILD_DIR); fi
 
-stbminhook: script/build_stb_minhook.py
-	@echo "## $@"
-	python $< depend/minhook dist/stb_minhook.h
-	cp -f dist/stb_minhook.h src/stb_minhook.h
+$(BUILD_DIR)/libminhook$(BUILD_TYPE).dll: src/libminhook.c src/stb_minhook.h
+	$(CC) $< -o $@ -shared \
+		$(INCS) $(LIBS) \
+		$(CFLAGS) $(LDFLAGS)
 
-libminhook: src/libminhook.c
-	@echo "## $@"
-	$(CC) $< -o $(BUILD_DIR)/$@$(BUILD_TYPE).dll \
-		-shared $(INCS) $(LIBS) \
-		$(CFLAGS) $(LDFLAGS) 
-
-libminhook_test: test/minhook_test.c
-	$(CC) $< -o $(BUILD_DIR)/$@$(BUILD_TYPE).dll \
+$(BUILD_DIR)/libminhook_test$(BUILD_TYPE).exe: src/libminhook_test.c $(BUILD_DIR)/libminhook$(BUILD_TYPE).dll
+	$(CC) $< -lminhook$(BUILD_TYPE) -L$(BUILD_DIR) -o $@ \
 		$(INCS) $(LIBS) \
 		$(CFLAGS) $(LDFLAGS) 
+
+stbminhook: script/build_stb_minhook.py
+	python $< depend/minhook $(BUILD_DIR)/stb_minhook.h
+	cp -f $(BUILD_DIR)/stb_minhook.h src/stb_minhook.h
+
+libminhook: $(BUILD_DIR)/libminhook$(BUILD_TYPE).dll
+
+libminhook_test: $(BUILD_DIR)/libminhook_test$(BUILD_TYPE).exe
 
 .PHONY: all clean prepare stb_minhook libminhook libminhook_test

@@ -1,7 +1,17 @@
 # stb minhook
 
-A single header library of [minhook](https://github.com/TsudaKageyu/minhook)  , compatible with `gcc`, `tcc`, `llvm-mingw(clang)`.  
-The namestyle is mostly like [stb](https://github.com/nothings/stb) style.
+A single header library (similar to [stb](https://github.com/nothings/stb)) for [minhook](https://github.com/TsudaKageyu/minhook),  
+compatible with `gcc`, `tcc`, `llvm-mingw(clang)`, `msvc`.  
+
+## usage
+
+Include the single header file either in `src/stb_minhook.h` or `dist/stb_minhook.h`, for example
+
+```c
+#define MINHOOK_IMPLEMENTATION
+#ifndef MINHOOK_SHARED // if you want to build dll and export api
+#include "std_minhook.h"
+```
 
 ## build
 
@@ -17,24 +27,14 @@ export MINGWSDK=/path/to/llvm-mingw && script/install_llvm-mingw.sh
 build stb_minhook.h
 
 ```sh
-mkdir dist
+mkdir build
 python script/build_stb_minhool.py
 ```
 
-build for testing
+build for debug
 
 ```sh
-make stbminhook
+make prepare stbminhook
 make libminhook libminhook_test CC=i686-w64-mingw32-gcc BUILD_TYPE=32d
 make libminhook libminhook_test CC=x86_64-w64-mingw32-gcc BUILD_TYPE=64d
-```
-
-## usage
-
-Include the single header file either in `src/stb_minhook.h` or `dist/stb_minhook.h`, for example
-
-```c
-#define MINHOOK_IMPLEMENTATION
-#ifndef MINHOOK_SHARED // if you want to build dll and export api
-#include "std_minhook.h"
 ```

@@ -4,23 +4,29 @@
 #ifndef _MINHOOK_H
 #define _MINHOOK_H
 #define MINHOOK_VERSION 1332 
-#ifndef MINHOOKDEF
-#ifdef MINHOOK_STATIC
-#define MINHOOKDEF static
-#else
-#define MINHOOKDEF extern
-#endif
-#endif
 
-#ifndef MINHOOK_SHARED
-#define MINHOOK_EXPORT
-#else
-#ifdef _WIN32
-#define MINHOOK_EXPORT __declspec(dllexport)
-#else
-#define MINHOOK_EXPORT __attribute__((visibility("default")))
+#if defined(_MSC_VER) || defined(__TINYC__)
+#ifndef EXPORT
+#define EXPORT __declspec(dllexport)
 #endif
+#else
+#ifndef EXPORT 
+#define EXPORT __attribute__((visibility("default")))
 #endif
+#endif // _MSC_VER
+#ifndef MINHOOK_API
+#ifdef MINHOOK_STATIC
+#define MINHOOK_API_DEF static
+#else
+#define MINHOOK_API_DEF extern
+#endif // MINHOOK_STATIC
+#ifdef MINHOOK_SHARED
+#define MINHOOK_API_EXPORT EXPORT
+#else  
+#define MINHOOK_API_EXPORT
+#endif // MINHOOK_SHARED
+#define MINHOOK_API MINHOOK_API_DEF MINHOOK_API_EXPORT
+#endif // MINHOOK_API
  
 #if 1 // minhook_decl
 /*
@@ -118,13 +124,11 @@ extern "C" {
 
     // Initialize the MinHook library. You must call this function EXACTLY ONCE
     // at the beginning of your program.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_Initialize(VOID);
+MINHOOK_API MH_STATUS WINAPI MH_Initialize(VOID);
 
     // Uninitialize the MinHook library. You must call this function EXACTLY
     // ONCE at the end of your program.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_Uninitialize(VOID);
+MINHOOK_API MH_STATUS WINAPI MH_Uninitialize(VOID);
 
     // Creates a hook for the specified target function, in disabled state.
     // Parameters:
@@ -135,8 +139,7 @@ MH_STATUS WINAPI MH_Uninitialize(VOID);
     //   ppOriginal  [out] A pointer to the trampoline function, which will be
     //                     used to call the original target function.
     //                     This parameter can be NULL.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_CreateHook(LPVOID pTarget, LPVOID pDetour, LPVOID *ppOriginal);
+MINHOOK_API MH_STATUS WINAPI MH_CreateHook(LPVOID pTarget, LPVOID pDetour, LPVOID *ppOriginal);
 
     // Creates a hook for the specified API function, in disabled state.
     // Parameters:
@@ -149,8 +152,7 @@ MH_STATUS WINAPI MH_CreateHook(LPVOID pTarget, LPVOID pDetour, LPVOID *ppOrigina
     //   ppOriginal  [out] A pointer to the trampoline function, which will be
     //                     used to call the original target function.
     //                     This parameter can be NULL.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_CreateHookApi(
+MINHOOK_API MH_STATUS WINAPI MH_CreateHookApi(
         LPCWSTR pszModule, LPCSTR pszProcName, LPVOID pDetour, LPVOID *ppOriginal);
 
     // Creates a hook for the specified API function, in disabled state.
@@ -167,55 +169,47 @@ MH_STATUS WINAPI MH_CreateHookApi(
     //   ppTarget    [out] A pointer to the target function, which will be used
     //                     with other functions.
     //                     This parameter can be NULL.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_CreateHookApiEx(
+MINHOOK_API MH_STATUS WINAPI MH_CreateHookApiEx(
         LPCWSTR pszModule, LPCSTR pszProcName, LPVOID pDetour, LPVOID *ppOriginal, LPVOID *ppTarget);
 
     // Removes an already created hook.
     // Parameters:
     //   pTarget [in] A pointer to the target function.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_RemoveHook(LPVOID pTarget);
+MINHOOK_API MH_STATUS WINAPI MH_RemoveHook(LPVOID pTarget);
 
     // Enables an already created hook.
     // Parameters:
     //   pTarget [in] A pointer to the target function.
     //                If this parameter is MH_ALL_HOOKS, all created hooks are
     //                enabled in one go.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_EnableHook(LPVOID pTarget);
+MINHOOK_API MH_STATUS WINAPI MH_EnableHook(LPVOID pTarget);
 
     // Disables an already created hook.
     // Parameters:
     //   pTarget [in] A pointer to the target function.
     //                If this parameter is MH_ALL_HOOKS, all created hooks are
     //                disabled in one go.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_DisableHook(LPVOID pTarget);
+MINHOOK_API MH_STATUS WINAPI MH_DisableHook(LPVOID pTarget);
 
     // Queues to enable an already created hook.
     // Parameters:
     //   pTarget [in] A pointer to the target function.
     //                If this parameter is MH_ALL_HOOKS, all created hooks are
     //                queued to be enabled.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_QueueEnableHook(LPVOID pTarget);
+MINHOOK_API MH_STATUS WINAPI MH_QueueEnableHook(LPVOID pTarget);
 
     // Queues to disable an already created hook.
     // Parameters:
     //   pTarget [in] A pointer to the target function.
     //                If this parameter is MH_ALL_HOOKS, all created hooks are
     //                queued to be disabled.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_QueueDisableHook(LPVOID pTarget);
+MINHOOK_API MH_STATUS WINAPI MH_QueueDisableHook(LPVOID pTarget);
 
     // Applies all queued changes in one go.
-MINHOOKDEF MINHOOK_EXPORT
-MH_STATUS WINAPI MH_ApplyQueued(VOID);
+MINHOOK_API MH_STATUS WINAPI MH_ApplyQueued(VOID);
 
     // Translates the MH_STATUS to its name as a string.
-MINHOOKDEF MINHOOK_EXPORT
-const char* WINAPI MH_StatusToString(MH_STATUS status);
+MINHOOK_API const char* WINAPI MH_StatusToString(MH_STATUS status);
 
 #ifdef __cplusplus
 }
