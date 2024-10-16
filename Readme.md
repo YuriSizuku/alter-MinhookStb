@@ -21,7 +21,7 @@ prepare enviroment
 git clone https://github.com/YuriSizuku/win-StbMinhook.git --recursive
 cd win-StbMinhook
 chmod +x script/*.sh script/*.py
-export MINGWSDK=/path/to/llvm-mingw && script/install_llvm-mingw.sh
+export MINGWSDK=/path/to/llvmmingw && script/install_llvmmingw.sh
 ```
 
 build stb_minhook.h

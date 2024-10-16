@@ -27,7 +27,7 @@ endif
 ifneq (,$(findstring d, $(BUILD_TYPE)))
 CFLAGS+=-g -D_DEBUG
 else
-CFLAGS+=-Os
+CFLAGS+=-O3
 endif
 ifneq (,$(findstring tcc, $(CC)))
 LDFLAGS= # tcc can not remove at at stdcall in i686
@@ -49,10 +49,10 @@ $(BUILD_DIR)/libminhook$(BUILD_TYPE).dll: src/libminhook.c src/stb_minhook.h
 
 $(BUILD_DIR)/libminhook_test$(BUILD_TYPE).exe: src/libminhook_test.c $(BUILD_DIR)/libminhook$(BUILD_TYPE).dll
 	$(CC) $< -lminhook$(BUILD_TYPE) -L$(BUILD_DIR) -o $@ \
-		$(INCS) $(LIBS) \
-		$(CFLAGS) $(LDFLAGS) 
+	$(INCS) $(LIBS) \
+	$(CFLAGS) $(LDFLAGS) 
 
-stbminhook: script/build_stb_minhook.py
+stbminhook: script/build_stbminhook.py
 	python $< depend/minhook $(BUILD_DIR)/stb_minhook.h
 	cp -f $(BUILD_DIR)/stb_minhook.h src/stb_minhook.h
 
@@ -60,4 +60,4 @@ libminhook: $(BUILD_DIR)/libminhook$(BUILD_TYPE).dll
 
 libminhook_test: $(BUILD_DIR)/libminhook_test$(BUILD_TYPE).exe
 
-.PHONY: all clean prepare stb_minhook libminhook libminhook_test
+.PHONY: all clean prepare stbminhook libminhook libminhook_test
