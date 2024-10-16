@@ -1,11 +1,13 @@
-# stb minhook
+# MinhookStb
 
-A single header library (similar to [stb](https://github.com/nothings/stb)) for [minhook](https://github.com/TsudaKageyu/minhook),  
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/yurisizuku/win-MinhookStb?color=green&label=MinhookStb)![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/YuriSizuku/win-MinhookStb/build.yml?label=build)
+
+🌿 A single header library (similar to [stb](https://github.com/nothings/stb)) for [minhook](https://github.com/TsudaKageyu/minhook),  
 compatible with `gcc`, `tcc`, `llvm-mingw(clang)`, `msvc`.  
 
 ## usage
 
-Include the single header file either in `src/stb_minhook.h` or `dist/stb_minhook.h`, for example
+Include the single header file either in `src/stb_minhook.h` or `build/stb_minhook.h`, for example
 
 ```c
 #define MINHOOK_IMPLEMENTATION
