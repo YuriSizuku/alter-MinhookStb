@@ -1,6 +1,6 @@
 # MinhookStb
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/yurisizuku/win-MinhookStb?color=green&label=MinhookStb)![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/YuriSizuku/win-MinhookStb/build.yml?label=build)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/yurisizuku/alter-MinhookStb?color=green&label=MinhookStb)![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/YuriSizuku/alter-MinhookStb/build.yml?label=build)
 
 🌿 A single header library (similar to [stb](https://github.com/nothings/stb)) for [minhook](https://github.com/TsudaKageyu/minhook),  
 compatible with `gcc`, `tcc`, `llvm-mingw(clang)`, `msvc`.  
@@ -20,8 +20,8 @@ Include the single header file either in `src/stb_minhook.h` or `build/stb_minho
 prepare enviroment
 
 ```sh
-git clone https://github.com/YuriSizuku/win-StbMinhook.git --recursive
-cd win-StbMinhook
+git clone https://github.com/YuriSizuku/alter-StbMinhook.git --recursive
+cd alter-StbMinhook
 chmod +x script/*.sh script/*.py
 export MINGWSDK=/path/to/llvmmingw && script/install_llvmmingw.sh
 ```
@@ -30,7 +30,7 @@ build stb_minhook.h
 
 ```sh
 mkdir build
-python script/build_stb_minhool.py
+python script/build_stbminhook.py
 ```
 
 build for debug

@@ -3,15 +3,16 @@ generate stb_minhook.h file
     v0.1, developed by devseed
 """
 
-info=\
+info = \
 """// single header file composed by devseed
-// more details in https://github.com/YuriSizuku/win-StbMinhook
+// see https://github.com/YuriSizuku/alter-MinhookStb
 """
 
 import re
 import os
 import sys
 
+# general function
 def mark_section(info):
     def wrapper1(func): # decorator(dec_args)(func)(fun_args)
         def wrapper2(*args, **kw):
@@ -47,6 +48,7 @@ def static_func(lines):
             lines[i] = "static " + line
     return lines
 
+# stb function
 def make_stbdecl() -> str:
     return  """
 #if defined(_MSC_VER) || defined(__TINYC__)
@@ -165,8 +167,8 @@ if __name__ == "__main__":
     srcdir = sys.argv[1] if len(sys.argv) > 1 else "depend/minhook" 
     outpath = sys.argv[2] if len(sys.argv) > 2 else "build/stb_minhook.h"
     version = sys.argv[3] if len(sys.argv) > 3 else "1332"
-    stb_ccode = make_stb(srcdir, info, version)
+    ccode = make_stb(srcdir, info, version)
     with open(outpath, "w", encoding="utf-8") as fp:
-        fp.write(stb_ccode)
+        fp.write(ccode)
     with open(f"{os.path.splitext(outpath)[0]}_v{version}.h", "w", encoding="utf-8") as fp:
-        fp.write(stb_ccode)
+        fp.write(ccode)

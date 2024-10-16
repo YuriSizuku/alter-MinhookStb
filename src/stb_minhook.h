@@ -1,5 +1,5 @@
 // single header file composed by devseed
-// more details in https://github.com/YuriSizuku/win-StbMinhook
+// see https://github.com/YuriSizuku/alter-MinhookStb
 
 #ifndef _MINHOOK_H
 #define _MINHOOK_H
