@@ -3,7 +3,7 @@
 
 #ifndef _MINHOOK_H
 #define _MINHOOK_H
-#define MINHOOK_VERSION 1332 
+#define MINHOOK_VERSION "1.3.4"
 
 #if defined(_MSC_VER) || defined(__TINYC__)
 #ifndef EXPORT
@@ -273,7 +273,7 @@ typedef struct _MEMORY_BLOCK
 //-------------------------------------------------------------------------
 
 // First element of the memory block list.
-PMEMORY_BLOCK g_pMemoryBlocks;
+static PMEMORY_BLOCK g_pMemoryBlocks;
 
 //-------------------------------------------------------------------------
 VOID InitializeBuffer(VOID)
@@ -2001,13 +2001,13 @@ typedef struct _FROZEN_THREADS
 //-------------------------------------------------------------------------
 
 // Spin lock flag for EnterSpinLock()/LeaveSpinLock().
-volatile LONG g_isLocked = FALSE;
+static volatile LONG g_isLocked = FALSE;
 
 // Private heap handle. If not NULL, this library is initialized.
-HANDLE g_hHeap = NULL;
+static HANDLE g_hHeap = NULL;
 
 // Hook entries.
-struct
+static struct
 {
     PHOOK_ENTRY pItems;     // Data heap
     UINT        capacity;   // Size of allocated data heap, items

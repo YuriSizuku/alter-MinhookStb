@@ -80,7 +80,7 @@ def patch_minhook(inpath)->str:
     lines = read_lines(inpath)
     replace_map = {
         "MH_STATUS WINAPI": "MINHOOK_API MH_STATUS WINAPI",
-        "const char * WINAPI": "MINHOOK_API const char* WINAPI"
+        "const char *WINAPI": "MINHOOK_API const char* WINAPI"
     }
     lines = replace_lines(lines, replace_map, strip_left=True)
     return "".join(lines)
@@ -151,7 +151,7 @@ def make_stb(repodir, info, version) -> str:
     return f"""{info}
 #ifndef _MINHOOK_H
 #define _MINHOOK_H
-#define MINHOOK_VERSION {version} 
+#define MINHOOK_VERSION "{version}"
 {stbdecl_ccode} 
 {mihookdecl_code}
 
@@ -166,9 +166,9 @@ def make_stb(repodir, info, version) -> str:
 if __name__ == "__main__":
     srcdir = sys.argv[1] if len(sys.argv) > 1 else "depend/minhook" 
     outpath = sys.argv[2] if len(sys.argv) > 2 else "build/stb_minhook.h"
-    version = sys.argv[3] if len(sys.argv) > 3 else "1332"
+    version = sys.argv[3] if len(sys.argv) > 3 else "1.3.4"
     ccode = make_stb(srcdir, info, version)
     with open(outpath, "w", encoding="utf-8") as fp:
         fp.write(ccode)
-    with open(f"{os.path.splitext(outpath)[0]}_v{version}.h", "w", encoding="utf-8") as fp:
+    with open(f"{os.path.splitext(outpath)[0]}_v{version.replace('.', '_')}.h", "w", encoding="utf-8") as fp:
         fp.write(ccode)

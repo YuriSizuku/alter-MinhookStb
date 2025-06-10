@@ -54,7 +54,7 @@ $(BUILD_DIR)/libminhook_test$(BUILD_TYPE).exe: src/libminhook_test.c $(BUILD_DIR
 
 stbminhook: script/build_stbminhook.py
 	python $< depend/minhook $(BUILD_DIR)/stb_minhook.h
-	cp -f $(BUILD_DIR)/stb_minhook.h src/stb_minhook.h
+	mv -f $(BUILD_DIR)/stb_minhook.h src/stb_minhook.h
 
 libminhook: $(BUILD_DIR)/libminhook$(BUILD_TYPE).dll
 

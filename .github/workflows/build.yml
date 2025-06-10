@@ -27,3 +27,23 @@ jobs:
         artifacts: "build/libminhook32.dll,build/libminhook64.dll"
         allowUpdates: "true"
         token: ${{ secrets.GITHUB_TOKEN }}
+
+  build_src_libminhook:
+    runs-on: Ubuntu-24.04
+    steps:
+    - name: pull and init
+      uses: actions/checkout@v3
+      with: {submodules: true}
+  
+    - name: build target
+      run: |
+        make prepare
+        make stbminhook
+    
+    - name: upload release
+      uses: ncipollo/release-action@v1
+      if: github.event_name == 'push'
+      with:
+        artifacts: "build/*.h"
+        allowUpdates: "true"
+        token: ${{ secrets.GITHUB_TOKEN }}
