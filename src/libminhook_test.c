@@ -13,10 +13,11 @@ void *pold = NULL;
 void *pnew = NULL;
 void *ptarget = NULL;
 
-typedef const char* (*PFN_print_hello)(int i);
+typedef const char* (*T_print_hello)(int i);
+MINHOOK_DEFINE(print_hello);
 
 // sometings, clang release might stiil inline this function, better to use debug type
-NOINLINE const char *print_hello(int i)
+NOINLINE char *print_hello(int i)
 {
     static char buf[0x256];
     sprintf(buf, "hello world %d", i);
@@ -26,12 +27,13 @@ NOINLINE const char *print_hello(int i)
 
 NOINLINE const char *print_hello_hook(int i)
 {
+    MINHOOK_ENTERFUNC(print_hello);
     static char buf[0x256];
-    PFN_print_hello pfn_print_hello = (PFN_print_hello)pold;
-    const char *res = pfn_print_hello(i);
+    const char *res = pfn(i);
     assert(res);
     sprintf(buf, "hello world hook %d", i);
     puts(buf);
+    MINHOOK_LEAVEFUNC(print_hello);
     return buf;
 }
 
@@ -47,28 +49,24 @@ int main(int argc, char *argv[])
     #endif
 
     // create hook
-    ptarget = (void*)print_hello;
-    pnew = (void*)print_hello_hook;
     MH_STATUS status = MH_Initialize();
     assert(status  == MH_OK);
-    status = MH_CreateHook(ptarget, pnew, &pold);
-    printf("MH_CreateHook %s\n", MH_StatusToString(status));
+    MINHOOK_BINDADDR(&print_hello, print_hello);
     
     // enable hook
-    status = MH_EnableHook(ptarget);
-    printf("MH_EnableHook %s\n", MH_StatusToString(status));
+    MINHOOK_ENABLE(print_hello);
     const char *res1 = print_hello(1);
     assert(res1);
     assert(!strcmp(res1, "hello world hook 1")); // clang release build might inline to make not pass
     
     // disable hook
-    status = MH_DisableHook(ptarget);
-    printf("MH_DisableHook %s\n", MH_StatusToString(status));
+    MINHOOK_DISABLE(print_hello);
     const char *res2 = print_hello(1);
     assert(res2);
     assert(!strcmp(res2, "hello world 1"));
     
     // uninstall hook
+    MINHOOK_UNBIND(print_hello);
     status = MH_Uninitialize();
     assert(status == MH_OK);
     

@@ -27,6 +27,57 @@
 #endif // MINHOOK_SHARED
 #define MINHOOK_API MINHOOK_API_DEF MINHOOK_API_EXPORT
 #endif // MINHOOK_API
+
+#ifndef LOGi
+#define LOGi(format, ...) {\
+    printf("[%s,%s] ", __func__, "I");\
+    printf(format, ##__VA_ARGS__);}
+#endif
+
+#define MINHOOK_DEFINE(name) \
+    static T_##name name##_org = NULL; \
+    static void *name##_old; \
+    static HANDLE name##_mutex = NULL;
+
+#define MINHOOK_BINDEXP(dll, name) \
+    name##_old = (T_##name)GetProcAddress(dll, #name); \
+    if(name##_old) { \
+        MH_CreateHook(name##_old, (LPVOID)(name##_hook), (LPVOID*)(&name##_org)); \
+        LOGi("MINHOOK_BIND " #name " %p -> %p\n", name##_old, name##_hook); \
+        MH_EnableHook(name##_old); \
+        name##_mutex = CreateMutex(NULL, FALSE, NULL); \
+    }
+
+#define MINHOOK_BINDADDR(addr, name) \
+    name##_old = addr; \
+    if(name##_old) { \
+        MH_CreateHook(name##_old, (LPVOID)(name##_hook), (LPVOID*)(&name##_org)); \
+        LOGi("MINHOOK_BIND " #name " %p -> %p\n", name##_old, name##_hook); \
+        MH_EnableHook(name##_old); \
+        name##_mutex = CreateMutex(NULL, FALSE, NULL); \
+    }
+
+#define MINHOOK_UNBIND(name) \
+    if(name##_old) {\
+        MH_RemoveHook(name##_old); \
+        CloseHandle(name##_mutex); \
+        LOGi("MINHOOK_UNBIND " #name " %p\n", name##_old); \
+    }
+
+#define MINHOOK_ENABLE(name) \
+    LOGi("MINHOOK_ENABLE " #name " %p\n", name##_old); \
+    MH_EnableHook(name##_old);
+
+#define MINHOOK_DISABLE(name) \
+    LOGi("MINHOOK_DISABLE " #name " %p\n", name##_old); \
+    MH_DisableHook(name##_old);
+
+#define MINHOOK_ENTERFUNC(name) \
+    WaitForSingleObject(name##_mutex, INFINITE); \
+    T_##name pfn = name##_org;
+
+#define MINHOOK_LEAVEFUNC(name) \
+    ReleaseMutex(name##_mutex);
  
 #if 1 // minhook_decl
 /*

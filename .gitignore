@@ -1,8 +1,8 @@
 .vs
-.vscode
 build
 __pycache__
 *.o
 *.exe
 *.dll
 *.vcxproj.user
+.vscode/settings.json

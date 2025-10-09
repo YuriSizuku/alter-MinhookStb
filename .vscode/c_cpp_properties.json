@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "Win64",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "MINHOOK_IMPLEMENTATION",
+                "MINHOOK_SHARED"
+            ],
+            "compilerPath": "${env:LLVMMINGW_HOME}/bin/clang.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "windows-clang-x64"
+        },
+        {
+            "name": "Linux64",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "MINHOOK_IMPLEMENTATION",
+                "MINHOOK_SHARED"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
