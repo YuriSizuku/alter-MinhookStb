@@ -37,7 +37,7 @@ def read_lines(inpath, encoding="utf-8"):
 def replace_lines(lines, replace_map, strip_left=False):
     for i, line in enumerate(lines):
         for k, v in replace_map.items():
-            if line.find(k) >=0: 
+            if line.find(k) >= 0: 
                 lines[i] = line.replace(k, v)
                 if strip_left: lines[i] = lines[i].lstrip()
     return lines
@@ -170,14 +170,16 @@ def patch_trampoline(trampolinepath, hdedir) -> str:
     lines_h = read_lines(os.path.splitext(trampolinepath)[0] + ".h", "utf_8_sig")
     lines_h = static_func(lines_h)
     lines_psdint_h = read_lines(os.path.join(hdedir, "pstdint.h"), "utf_8_sig")
-    lines_hde32 = patch_hde(os.path.join(hdedir, "hde32.c"), os.path.join(hdedir, "table32.h"))
-    lines_hde64 = patch_hde(os.path.join(hdedir, "hde64.c"), os.path.join(hdedir, "table64.h"))
+    str_hde32 = patch_hde(os.path.join(hdedir, "hde32.c"), os.path.join(hdedir, "table32.h"))
+    str_hde32 = str_hde32.replace("unsigned char hde32_table[]", "static unsigned char hde32_table[]")
+    str_hde64 = patch_hde(os.path.join(hdedir, "hde64.c"), os.path.join(hdedir, "table64.h"))
+    str_hde64 = str_hde64.replace("unsigned char hde64_table[]", "static unsigned char hde64_table[]")
     lines_c = read_lines(os.path.splitext(trampolinepath)[0] + ".c", "utf_8_sig")
     lines_c = replace_lines(lines_c, {
         '#include "trampoline.h"': "".join(lines_h), 
         '#include "buffer.h"' : '//#include "buffer.h"',
-        '#include "./hde/hde32.h"': "".join(lines_hde32),
-        '#include "./hde/hde64.h"': "".join(lines_hde64)
+        '#include "./hde/hde32.h"': str_hde32,
+        '#include "./hde/hde64.h"': str_hde64
     })
     return "".join(lines_psdint_h) + "".join(lines_c)
 

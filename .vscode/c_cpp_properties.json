@@ -23,7 +23,7 @@
                 "MINHOOK_IMPLEMENTATION",
                 "MINHOOK_SHARED"
             ],
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/x86_64-w64-mingw32-gcc",
             "cStandard": "c99",
             "cppStandard": "c++11",
             "intelliSenseMode": "linux-gcc-x64"
